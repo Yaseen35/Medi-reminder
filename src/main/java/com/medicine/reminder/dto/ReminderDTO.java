@@ -1,0 +1,2 @@
+package com.medicine.reminder.dto; import jakarta.validation.constraints.*; import lombok.*; import java.time.LocalDate;
+@Getter @Setter public class ReminderDTO { @NotNull private Long medicineId; @Pattern(regexp="^([01]\\d|2[0-3]):[0-5]\\d$") private String time; @NotBlank private String frequency; private String daysOfWeek; private LocalDate startDate; private LocalDate endDate; private Boolean isActive; }
