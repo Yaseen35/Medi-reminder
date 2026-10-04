@@ -502,3 +502,50 @@ button {
     padding: 12px;
   }
 }
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.spin-slow {
+  animation: spin 3s linear infinite;
+}
+
+/* Print Styles for Medical Report */
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .sidebar,
+  .no-print,
+  button,
+  .modal-overlay {
+    display: none !important;
+  }
+  .main-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+  #printable-report {
+    background: #fff !important;
+    color: #111 !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 10px !important;
+  }
+  #printable-report * {
+    color: #111 !important;
+    border-color: #ddd !important;
+  }
+  #printable-report h2,
+  #printable-report h3 {
+    color: #000 !important;
+  }
+  #printable-report th {
+    background-color: #f1f5f9 !important;
+    color: #334155 !important;
+  }
+}

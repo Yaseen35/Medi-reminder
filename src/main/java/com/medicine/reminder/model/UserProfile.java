@@ -7,4 +7,6 @@ public class UserProfile {
  @Column(nullable=false) private String name;
  @Column(nullable=false) private String relation;
  private String avatar;
+ @Column(nullable=true) private Integer age;
+ @Column(nullable=true) private String allergies;
 }

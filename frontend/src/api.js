@@ -83,5 +83,10 @@ export const api = {
   deleteConnection: (id) => apiFetch(`/mentors/connections/${id}`, { method: 'DELETE' }),
   getMenteeOverview: (menteeId) => apiFetch(`/mentors/mentees/${menteeId}/overview`),
   getConnectionNotes: (connectionId) => apiFetch(`/mentors/connections/${connectionId}/notes`),
-  sendConnectionNote: (connectionId, message) => apiFetch(`/mentors/connections/${connectionId}/notes`, { method: 'POST', body: JSON.stringify({ message }) })
+  sendConnectionNote: (connectionId, message) => apiFetch(`/mentors/connections/${connectionId}/notes`, { method: 'POST', body: JSON.stringify({ message }) }),
+
+  // Medical Events & Appointments Calendar
+  getEvents: (profileId) => apiFetch(`/events?profileId=${profileId}`),
+  createEvent: (data) => apiFetch('/events', { method: 'POST', body: JSON.stringify(data) }),
+  deleteEvent: (id) => apiFetch(`/events/${id}`, { method: 'DELETE' })
 };
