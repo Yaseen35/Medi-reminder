@@ -14,7 +14,10 @@ import {
   Heart,
   Flame,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  ShieldCheck,
+  Sparkles,
+  QrCode
 } from 'lucide-react';
 
 export default function MentorsView({ showToast }) {
@@ -98,10 +101,10 @@ export default function MentorsView({ showToast }) {
   };
 
   const handleDisconnect = async (connectionId, username) => {
-    if (!confirm(`Disconnect link with ${username}? This will revoke access and remove notes.`)) return;
+    if (!confirm(`Disconnect caregiver link with ${username}? This will revoke access and remove notes.`)) return;
     try {
       await api.deleteConnection(connectionId);
-      showToast('Disconnected successfully.', 'info');
+      showToast('Caregiver link disconnected.', 'info');
       fetchOverview();
     } catch (err) {
       showToast(err.message, 'error');
@@ -148,7 +151,7 @@ export default function MentorsView({ showToast }) {
       await api.sendConnectionNote(activeConnId, newNoteMessage.trim());
       setNewNoteMessage('');
       fetchNotes(activeConnId);
-      fetchOverview(); // Update notes count
+      fetchOverview();
     } catch (err) {
       showToast(err.message, 'error');
     }
@@ -164,11 +167,21 @@ export default function MentorsView({ showToast }) {
   const currentList = activeTab === 'mentors' ? overview.myMentors : overview.myMentees;
 
   return (
-    <div>
-      <div className="page-top-row">
-        <div className="page-title">
-          <h1>Caregivers & Mentors</h1>
-          <p>Supervise medication adherence, track family habits, and send encouragement</p>
+    <div style={{ display: 'grid', gap: '24px' }}>
+      {/* Top Header */}
+      <div className="page-top-row" style={{ marginBottom: 0 }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--primary-light)', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+              Caregiver Network
+            </span>
+          </div>
+          <h1 style={{ fontSize: '28px', fontWeight: 800, marginTop: '2px' }}>
+            Caregivers & Mentors Portal
+          </h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '2px' }}>
+            Supervise medication adherence, track family habits, and send supportive encouragement
+          </p>
         </div>
 
         <button onClick={() => setConnectModalOpen(true)} className="btn-primary">
@@ -177,25 +190,39 @@ export default function MentorsView({ showToast }) {
         </button>
       </div>
 
-      {/* Shareable Link Code Banner */}
+      {/* Shareable Link Code Card */}
       <div className="glass-card" style={{
-        background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.22), rgba(139, 92, 246, 0.15))',
+        background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.15))',
         border: '1px solid rgba(129, 140, 248, 0.35)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: '16px',
-        marginBottom: '28px',
-        padding: '24px 28px'
+        gap: '20px',
+        padding: '26px 32px'
       }}>
-        <div>
-          <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#fff', margin: '0 0 4px' }}>
-            Your Caregiver Link Code
-          </h3>
-          <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
-            Share this 8-character code with your mentor, caregiver, or patient to link accounts securely.
-          </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+          <div style={{
+            width: '54px',
+            height: '54px',
+            borderRadius: '16px',
+            background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+            display: 'grid',
+            placeItems: 'center',
+            color: '#fff',
+            boxShadow: '0 4px 18px rgba(99, 102, 241, 0.4)',
+            flexShrink: 0
+          }}>
+            <QrCode size={26} />
+          </div>
+          <div>
+            <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#fff', margin: '0 0 3px' }}>
+              Your Caregiver Link Code
+            </h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
+              Share this unique 8-character code with your caregiver, doctor, or family member to link accounts securely.
+            </p>
+          </div>
         </div>
 
         <div style={{
@@ -203,40 +230,42 @@ export default function MentorsView({ showToast }) {
           alignItems: 'center',
           gap: '12px',
           background: 'rgba(0, 0, 0, 0.35)',
-          padding: '8px 16px',
-          borderRadius: '12px',
+          padding: '10px 18px',
+          borderRadius: '14px',
           border: '1px solid rgba(255, 255, 255, 0.12)'
         }}>
           <span style={{
-            fontSize: '18px',
+            fontSize: '20px',
             fontWeight: 800,
             fontFamily: 'monospace',
-            color: '#a5b4fc',
-            letterSpacing: '1px'
+            color: '#c7d2fe',
+            letterSpacing: '1.5px'
           }}>
             {overview.inviteCode || 'Loading...'}
           </span>
           <button
             onClick={handleCopyCode}
             className="btn-secondary"
-            style={{ fontSize: '12px', padding: '6px 12px' }}
+            style={{ fontSize: '12px', padding: '6px 14px', gap: '6px' }}
           >
             {copied ? <Check size={14} color="#34d399" /> : <Copy size={14} />}
-            <span>{copied ? 'Copied!' : 'Copy'}</span>
+            <span>{copied ? 'Copied!' : 'Copy Code'}</span>
           </button>
         </div>
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
         <button
           onClick={() => setActiveTab('mentors')}
           className={`btn-secondary ${activeTab === 'mentors' ? 'active' : ''}`}
           style={{
+            fontSize: '14px',
+            padding: '10px 20px',
             background: activeTab === 'mentors' ? 'linear-gradient(135deg, #6366f1, #4f46e5)' : 'rgba(255, 255, 255, 0.05)',
             borderColor: activeTab === 'mentors' ? '#818cf8' : 'var(--border-subtle)',
             color: activeTab === 'mentors' ? '#fff' : 'var(--text-muted)',
-            boxShadow: activeTab === 'mentors' ? '0 4px 14px rgba(99, 102, 241, 0.4)' : 'none'
+            boxShadow: activeTab === 'mentors' ? '0 4px 16px rgba(99, 102, 241, 0.4)' : 'none'
           }}
         >
           <UserCheck size={16} />
@@ -247,10 +276,12 @@ export default function MentorsView({ showToast }) {
           onClick={() => setActiveTab('mentees')}
           className={`btn-secondary ${activeTab === 'mentees' ? 'active' : ''}`}
           style={{
+            fontSize: '14px',
+            padding: '10px 20px',
             background: activeTab === 'mentees' ? 'linear-gradient(135deg, #6366f1, #4f46e5)' : 'rgba(255, 255, 255, 0.05)',
             borderColor: activeTab === 'mentees' ? '#818cf8' : 'var(--border-subtle)',
             color: activeTab === 'mentees' ? '#fff' : 'var(--text-muted)',
-            boxShadow: activeTab === 'mentees' ? '0 4px 14px rgba(99, 102, 241, 0.4)' : 'none'
+            boxShadow: activeTab === 'mentees' ? '0 4px 16px rgba(99, 102, 241, 0.4)' : 'none'
           }}
         >
           <Users size={16} />
@@ -258,21 +289,21 @@ export default function MentorsView({ showToast }) {
         </button>
       </div>
 
-      {/* Connections List */}
+      {/* Connections Grid */}
       {currentList.length === 0 ? (
         <div className="glass-card empty-state">
           <span className="empty-state-icon">{activeTab === 'mentors' ? '🧑‍⚕️' : '👥'}</span>
-          <p style={{ fontWeight: 700, color: '#fff', fontSize: '16px' }}>
+          <p style={{ fontWeight: 800, color: '#fff', fontSize: '18px' }}>
             {activeTab === 'mentors' 
-              ? 'No caregivers or mentors connected yet' 
-              : 'You are not supervising any patients or mentees yet'}
+              ? 'No Caregivers Connected Yet' 
+              : 'You Are Not Mentoring Anyone Yet'}
           </p>
-          <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '4px' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '4px' }}>
             {activeTab === 'mentors'
-              ? 'Invite a loved one or caregiver to monitor your medication adherence.'
-              : 'Ask your family member or patient for their Caregiver Code to connect.'}
+              ? 'Invite a family member or caregiver to monitor your adherence and send encouragement.'
+              : 'Ask your family member or patient for their Caregiver Code to start monitoring their medication schedule.'}
           </p>
-          <button onClick={() => setConnectModalOpen(true)} className="btn-primary" style={{ marginTop: '16px' }}>
+          <button onClick={() => setConnectModalOpen(true)} className="btn-primary" style={{ marginTop: '18px' }}>
             <Plus size={16} />
             <span>Connect Now</span>
           </button>
@@ -280,7 +311,7 @@ export default function MentorsView({ showToast }) {
       ) : (
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
           gap: '20px'
         }}>
           {currentList.map((c) => {
@@ -290,28 +321,28 @@ export default function MentorsView({ showToast }) {
             const isMenteeTab = activeTab === 'mentees';
 
             return (
-              <div key={c.id} className="glass-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div key={c.id} className="glass-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '24px' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
                     <div style={{
-                      width: '48px',
-                      height: '48px',
+                      width: '52px',
+                      height: '52px',
                       borderRadius: '50%',
                       background: isMenteeTab ? 'linear-gradient(135deg, #06b6d4, #3b82f6)' : 'linear-gradient(135deg, #8b5cf6, #ec4899)',
                       display: 'grid',
                       placeItems: 'center',
-                      fontSize: '22px',
+                      fontSize: '24px',
                       color: '#fff',
-                      boxShadow: '0 4px 14px rgba(99, 102, 241, 0.3)',
+                      boxShadow: '0 4px 16px rgba(99, 102, 241, 0.3)',
                       flexShrink: 0
                     }}>
                       {isMenteeTab ? '👤' : '🧑‍⚕️'}
                     </div>
                     <div>
-                      <h3 style={{ fontSize: '17px', fontWeight: 800, color: '#fff', margin: 0 }}>
+                      <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#fff', margin: 0 }}>
                         {other.username}
                       </h3>
-                      <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                      <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
                         {other.email}
                       </p>
                     </div>
@@ -321,17 +352,17 @@ export default function MentorsView({ showToast }) {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '8px 12px',
-                    borderRadius: '10px',
+                    padding: '10px 14px',
+                    borderRadius: '12px',
                     background: 'rgba(0, 0, 0, 0.25)',
                     marginBottom: '18px',
                     fontSize: '12px'
                   }}>
-                    <span style={{ color: 'var(--text-dim)', fontWeight: 600 }}>
-                      {isMenteeTab ? 'Mentee / Patient' : 'Mentor / Caregiver'}
+                    <span style={{ color: 'var(--text-dim)', fontWeight: 700, textTransform: 'uppercase' }}>
+                      {isMenteeTab ? 'Patient / Mentee' : 'Caregiver / Mentor'}
                     </span>
                     {isAccepted ? (
-                      <span className="badge badge-taken">Connected</span>
+                      <span className="badge badge-taken">Active Connection</span>
                     ) : isPending ? (
                       c.canRespond ? (
                         <span className="badge badge-skipped">Action Required</span>
@@ -367,7 +398,7 @@ export default function MentorsView({ showToast }) {
                         <button
                           onClick={() => openMenteeSupervision(other)}
                           className="btn-primary"
-                          style={{ fontSize: '12px', padding: '6px 12px' }}
+                          style={{ fontSize: '12px', padding: '6px 14px', gap: '6px' }}
                         >
                           <BarChart3 size={14} />
                           <span>Supervision</span>
@@ -376,7 +407,7 @@ export default function MentorsView({ showToast }) {
                       <button
                         onClick={() => openNotesDrawer(c.id, other.username)}
                         className="btn-secondary"
-                        style={{ fontSize: '12px', padding: '6px 12px' }}
+                        style={{ fontSize: '12px', padding: '6px 14px', gap: '6px' }}
                       >
                         <MessageSquare size={14} />
                         <span>Notes ({c.notesCount})</span>
@@ -386,7 +417,7 @@ export default function MentorsView({ showToast }) {
                         className="btn-icon"
                         title="Disconnect Link"
                       >
-                        <Trash2 size={14} color="#f87171" />
+                        <Trash2 size={15} color="#f87171" />
                       </button>
                     </>
                   ) : (
@@ -405,8 +436,13 @@ export default function MentorsView({ showToast }) {
       {connectModalOpen && (
         <div className="modal-overlay" onClick={() => setConnectModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: 800 }}>Connect Mentor or Mentee</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '22px' }}>
+              <div>
+                <h2 style={{ fontSize: '20px', fontWeight: 800 }}>Connect Mentor or Mentee</h2>
+                <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
+                  Link with a caregiver to supervise or share adherence
+                </p>
+              </div>
               <button onClick={() => setConnectModalOpen(false)} className="btn-icon">
                 <X size={16} />
               </button>
@@ -423,8 +459,8 @@ export default function MentorsView({ showToast }) {
                   onChange={(e) => setConnectRole(e.target.value)}
                   style={{ width: '100%' }}
                 >
-                  <option value="MENTOR">I want them to be my Caregiver / Mentor (They supervise my adherence)</option>
-                  <option value="MENTEE">I want to be their Caregiver / Mentor (I supervise their adherence)</option>
+                  <option value="MENTOR">I want them to be my Caregiver / Mentor (They supervise me)</option>
+                  <option value="MENTEE">I want to be their Caregiver / Mentor (I supervise them)</option>
                 </select>
               </div>
 
@@ -442,7 +478,7 @@ export default function MentorsView({ showToast }) {
                 />
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '16px' }}>
                 <button type="button" onClick={() => setConnectModalOpen(false)} className="btn-secondary">
                   Cancel
                 </button>
@@ -461,7 +497,7 @@ export default function MentorsView({ showToast }) {
           <div
             className="modal-content"
             onClick={(e) => e.stopPropagation()}
-            style={{ width: 'min(920px, 95vw)', maxHeight: '90vh' }}
+            style={{ width: 'min(940px, 95vw)', maxHeight: '90vh' }}
           >
             <div style={{
               display: 'flex',
@@ -490,71 +526,73 @@ export default function MentorsView({ showToast }) {
                 <p>Loading patient adherence overview...</p>
               </div>
             ) : menteeData ? (
-              <div style={{ display: 'grid', gap: '20px' }}>
+              <div style={{ display: 'grid', gap: '22px' }}>
                 {/* Stats Row */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '14px' }}>
-                  <div className="glass-card" style={{ padding: '16px', textAlign: 'center' }}>
-                    <span style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '14px' }}>
+                  <div className="glass-card" style={{ padding: '18px', textAlign: 'center', background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(22, 27, 46, 0.7))' }}>
+                    <span style={{ fontSize: '11px', color: '#6ee7b7', textTransform: 'uppercase', fontWeight: 800 }}>
                       Today's Adherence
                     </span>
-                    <div style={{ fontSize: '28px', fontWeight: 800, color: '#34d399', marginTop: '4px' }}>
+                    <div style={{ fontSize: '30px', fontWeight: 800, color: '#fff', marginTop: '4px' }}>
                       {menteeData.adherence?.adherencePercent}%
                     </div>
                   </div>
 
-                  <div className="glass-card" style={{ padding: '16px', textAlign: 'center' }}>
-                    <span style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>
-                      Active Streak
+                  <div className="glass-card" style={{ padding: '18px', textAlign: 'center', background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(22, 27, 46, 0.7))' }}>
+                    <span style={{ fontSize: '11px', color: '#fde68a', textTransform: 'uppercase', fontWeight: 800 }}>
+                      Intake Streak
                     </span>
-                    <div style={{ fontSize: '28px', fontWeight: 800, color: '#f59e0b', marginTop: '4px' }}>
+                    <div style={{ fontSize: '30px', fontWeight: 800, color: '#f59e0b', marginTop: '4px' }}>
                       🔥 {menteeData.adherence?.streakDays} Days
                     </div>
                   </div>
 
-                  <div className="glass-card" style={{ padding: '16px', textAlign: 'center' }}>
-                    <span style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>
-                      Taken / Scheduled
+                  <div className="glass-card" style={{ padding: '18px', textAlign: 'center' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 800 }}>
+                      Taken / Total
                     </span>
-                    <div style={{ fontSize: '28px', fontWeight: 800, color: '#c7d2fe', marginTop: '4px' }}>
+                    <div style={{ fontSize: '30px', fontWeight: 800, color: '#c7d2fe', marginTop: '4px' }}>
                       {menteeData.adherence?.takenToday} / {menteeData.adherence?.totalToday}
                     </div>
                   </div>
 
-                  <div className="glass-card" style={{ padding: '16px', textAlign: 'center' }}>
-                    <span style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 700 }}>
+                  <div className="glass-card" style={{ padding: '18px', textAlign: 'center' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', fontWeight: 800 }}>
                       Pending / Missed
                     </span>
-                    <div style={{ fontSize: '28px', fontWeight: 800, color: '#fca5a5', marginTop: '4px' }}>
+                    <div style={{ fontSize: '30px', fontWeight: 800, color: '#fca5a5', marginTop: '4px' }}>
                       {menteeData.adherence?.pendingToday} / {menteeData.adherence?.missedToday}
                     </div>
                   </div>
                 </div>
 
                 {/* Today's Schedule Timeline */}
-                <div className="glass-card" style={{ padding: '18px 22px' }}>
-                  <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '14px' }}>
+                <div className="glass-card" style={{ padding: '22px' }}>
+                  <h3 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '14px' }}>
                     Today's Medication Timeline
                   </h3>
                   {menteeData.todayDoses?.length === 0 ? (
                     <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>No doses scheduled for today.</p>
                   ) : (
-                    <div style={{ display: 'grid', gap: '8px' }}>
+                    <div style={{ display: 'grid', gap: '10px' }}>
                       {menteeData.todayDoses?.map((d, idx) => (
                         <div
                           key={idx}
                           style={{
                             background: 'rgba(255, 255, 255, 0.03)',
-                            padding: '10px 14px',
-                            borderRadius: '10px',
+                            padding: '12px 18px',
+                            borderRadius: '12px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            fontSize: '13px'
+                            fontSize: '13px',
+                            border: '1px solid rgba(255, 255, 255, 0.05)'
                           }}
                         >
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <strong style={{ color: '#a5b4fc', fontSize: '14px' }}>{d.time}</strong>
-                            <span>{d.medicineName} ({d.dosage})</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                            <strong style={{ color: '#a5b4fc', fontSize: '15px' }}>{d.time}</strong>
+                            <span style={{ fontWeight: 700, color: '#fff' }}>{d.medicineName}</span>
+                            <span style={{ color: 'var(--text-muted)' }}>({d.dosage})</span>
                             <span className="badge badge-pending" style={{ fontSize: '10px' }}>{d.profileName}</span>
                           </div>
                           <div>
@@ -570,8 +608,8 @@ export default function MentorsView({ showToast }) {
                 </div>
 
                 {/* Prescribed Medicines */}
-                <div className="glass-card" style={{ padding: '18px 22px', overflowX: 'auto' }}>
-                  <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '14px' }}>
+                <div className="glass-card" style={{ padding: '22px', overflowX: 'auto' }}>
+                  <h3 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '14px' }}>
                     Prescribed Medicines & Stock Levels
                   </h3>
                   {menteeData.medicines?.length === 0 ? (
@@ -580,7 +618,7 @@ export default function MentorsView({ showToast }) {
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
                       <thead>
                         <tr style={{ borderBottom: '1px solid var(--border-subtle)', textAlign: 'left' }}>
-                          <th style={{ padding: '8px 12px', color: 'var(--text-dim)' }}>Medicine</th>
+                          <th style={{ padding: '8px 12px', color: 'var(--text-dim)' }}>Prescription</th>
                           <th style={{ padding: '8px 12px', color: 'var(--text-dim)' }}>Dosage</th>
                           <th style={{ padding: '8px 12px', color: 'var(--text-dim)' }}>Profile</th>
                           <th style={{ padding: '8px 12px', color: 'var(--text-dim)' }}>Stock Remaining</th>
@@ -589,7 +627,7 @@ export default function MentorsView({ showToast }) {
                       <tbody>
                         {menteeData.medicines?.map((m) => (
                           <tr key={m.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}>
-                            <td style={{ padding: '10px 12px', fontWeight: 600 }}>{m.name}</td>
+                            <td style={{ padding: '10px 12px', fontWeight: 700 }}>{m.name}</td>
                             <td style={{ padding: '10px 12px', color: 'var(--text-muted)' }}>{m.dosage}</td>
                             <td style={{ padding: '10px 12px' }}><span className="badge badge-pending" style={{ fontSize: '10px' }}>{m.profileName}</span></td>
                             <td style={{ padding: '10px 12px', fontWeight: 700, color: m.stock <= m.lowStockThreshold ? '#fca5a5' : '#6ee7b7' }}>
@@ -613,7 +651,7 @@ export default function MentorsView({ showToast }) {
           <div
             className="modal-content"
             onClick={(e) => e.stopPropagation()}
-            style={{ width: 'min(640px, 95vw)', display: 'flex', flexDirection: 'column', height: '560px' }}
+            style={{ width: 'min(640px, 95vw)', display: 'flex', flexDirection: 'column', height: '580px' }}
           >
             <div style={{
               display: 'flex',
@@ -648,7 +686,7 @@ export default function MentorsView({ showToast }) {
               {notesList.length === 0 ? (
                 <div className="empty-state" style={{ padding: '40px 0' }}>
                   <span className="empty-state-icon">💌</span>
-                  <p style={{ fontWeight: 700, color: '#fff' }}>No messages exchanged yet</p>
+                  <p style={{ fontWeight: 800, color: '#fff' }}>No notes exchanged yet</p>
                   <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
                     Send an encouraging check-in or note to begin!
                   </p>
