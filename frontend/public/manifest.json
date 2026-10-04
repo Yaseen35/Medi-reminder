@@ -1,0 +1,1 @@
+{"name":"MediRemind - Smart Medicine Reminder","short_name":"MediRemind","start_url":"/dashboard.html","display":"standalone","background_color":"#0f0c29","theme_color":"#7c3aed","description":"Smart medicine tracker with streaks, stock monitoring, and proactive alerts.","icons":[{"src":"/images/mediremind-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
