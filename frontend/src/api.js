@@ -21,11 +21,11 @@ export async function apiFetch(endpoint, options = {}) {
     throw new Error('Unable to connect to the server. Please check your internet connection.');
   }
 
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 403) {
     localStorage.removeItem('jwt');
     localStorage.removeItem('username');
     window.dispatchEvent(new Event('auth-expired'));
-    throw new Error('Your session has expired. Please sign in again.');
+    throw new Error('Your session has expired or is invalid. Please sign in again.');
   }
 
   if (!res.ok) {
